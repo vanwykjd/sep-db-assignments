@@ -1,0 +1,122 @@
+1. What data types do each of these values represent? 
+
+  "A Clockwork Orange" : varchar(n)
+  42 : integer
+  09/02/1945 :  date / varchar(n)
+  98.7 : float 
+  $15.99 : currency / float / varchar(n)
+    
+  
+
+
+2. Explain in your own words when a database might be used. Explain when a text file might be used.
+
+  A database would be used to keep track of important data for a company, such as employee information. A company could keep track of employee data by creating
+  a table made up of rows representing each of its employees, and columns describing the attributes desired to associated with each employee (ID, Name, Phone, Email...).
+  A text file would be used when information is needing to be capable of being read by humans. Usually these files explain a set of instructions, or describes particular components of a program.
+    
+  
+
+
+3. Describe one difference between SQL and other programming languages.
+
+  Programming languages are used to write lines code that are meant to solve problems in a procedural manner. The programmer has to declare what lines are to be executed when a certain output is desired.
+  SQL is a nonprocedural language, giving it the ability to perform tasks without having specifying how they are to be accomplished. 
+  
+  
+
+
+4. In your own words, explain how the pieces of a database system fit together at a high level.
+
+  Databases organize data using table structures. These tables are made up of cells that are placed in corresponding columns and rows;
+  The columns indicate the data types and a name that describes the data they contain, and the rows contain the records of complete units that have attributes described by the columns.
+  Cells contain the actual values of data, and are located at the intersection of each column and row.
+  
+  
+
+
+5. Explain the meaning of table, row, column, and value.
+
+  Table:  A table is a structure consisting of columns and rows. Each table represents a collection of records that contain the same attributes.
+  Row:  A row is an instance of a complete record that is made up of different attributes, and represent a set of related data values. Each row within the same table contain the same attributes and structure.
+  Column: A column describes the name of an attribute given to a record, and determines the data type of the described attribute.
+  Value: A value is at the intersection of each column and row. It belongs to the record indicated by the row, and is described by the column of which it is in.
+  
+  
+
+
+6. List 3 data types that can be used in a table.
+
+  Binary, Boolean, Real
+  
+  
+
+
+7. Given this payments table, provide an English description of the following queries and include their results:
+  
+  >>  SELECT date, amount
+  >>  FROM payments;
+  
+  Select the "date" and "amount" from every payment within the "payments" table.
+  The result returns every record's "date" and "amount" that is within the "payments" table.
+  
+  
+  >>  SELECT amount
+  >>  FROM payments
+  >>  WHERE amount > 500;
+  
+  Select the payments that have an "amount" greater than 500 within the "payments" table.
+  The result shows that there is one payment with an "amount" value of "1500", within the "payments" table.
+  
+  
+  >>  SELECT *
+  >>  FROM payments
+  >>  WHERE payee = 'Mega Foods';
+  
+  Select all of the columns for a payment where the "payee" is equal to "Mega Foods" within the "payments" table.
+  The result returns all the columns associated with a payment where "payee" is equal to "Mega Foods"
+  
+  
+
+
+8. Given this users table, write SQL queries using the following criteria and include the output:
+
+  The email and sign-up date for the user named DeAndre Data.
+  
+  >>  SELECT email, signup
+  >>  FROM users
+  >>  WHERE name = 'DeAndre Data';
+  
+  --------------------------------------------------------
+  | email                 | signup                       |
+  --------------------------------------------------------
+  | datad@comcast.net     | 2008-01-20T00:00:00.000Z     |
+  --------------------------------------------------------
+
+
+
+  The user ID for the user with email 'aleesia.algorithm@uw.edu'.
+  
+  >>  SELECT userid
+  >>  FROM users
+  >>  WHERE email = 'aleesia.algorithm@uw.edu';
+  
+  ------------------------------------------------
+  | userid                                       |
+  ------------------------------------------------
+  | 1                                            |
+  ------------------------------------------------
+  
+  
+  
+  All the columns for the user ID equal to 4.
+  
+  >> SELECT *
+  >> FROM users
+  >> WHERE userid = 4;
+  
+  -----------------------------------------------------------------------------------------------------
+  | userid        | name                        | email                 | signup                      |
+  -----------------------------------------------------------------------------------------------------
+  | 4             | Brandy Boolean              | bboolean@nasa.gov     | 1999-10-15T00:00:00.000Z    |
+  -----------------------------------------------------------------------------------------------------
