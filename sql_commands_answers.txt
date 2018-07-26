@@ -1,0 +1,192 @@
+1. List the commands for adding, updating, and deleting data
+
+    adding: INSERT INTO
+    
+      INSERT INTO table_name (column_1, column_2, column_3,...)  
+      VALUES (value_1, value_2, value_3,...);
+      
+    
+    updating: UPDATE, ALTER TABLE - ADD COLUMN
+      
+      UPDATE table_name
+      SET column_1 = value_1, column_2 = value_2, column_3 = value_3,...
+      WHERE [conditional]
+      
+      ALTER TABLE table_name ADD COLUMN column_name data_type;
+
+
+    deleting: DELETE, ALTER TABLE - DROP COLUMN, DROP TABLE
+    
+      DELETE FROM table_name
+      WHERE [conditional]
+      
+      ALTER TABLE table_name DROP COLUMN column_name;
+      
+      DROP TABLE table_name;
+
+
+
+
+2. Explain the structure for each type of command.
+    
+    INSERT INTO:
+      
+      INSERT INTO* table_name** (column_1, column_2, column_3,...)***
+      VALUES**** (value_1, value_2, value_3,...)*****;
+        
+        * INSERT INTO is the command that declares that data is to be added 
+        ** table_name declares the name of the table data will be added 
+        *** (column_1, column_2, column_3,...) are the columns describing the data that is being added
+        **** VALUES is the syntax used to declare that the following data to be added
+        ***** (value_1, value_2, value_3,...) are the values of the data to be added in the corresponding order of which the ***columns were declared
+        
+    
+    UPDATE:
+    
+      UPDATE* table_name**
+      SET*** column_1 = value_1, column_2 = value_2, column_3 = value_3,...****
+      WHERE***** [conditional]
+        
+        * UPDATE is the command that declares that data is to be updated 
+        ** table_name declares the name of the table that data is to updated
+        *** SET is the syntax used to declare that the following data to be updated
+        **** column_1 = value_1, column_2 = value_2, column_3 = value_3,... are the columns and their corresponding values to be updated
+        ***** WHERE is the clause used when only wanting to update data that meets the conditional statement(s) given
+    
+    
+    ALTER TABLE - ADD COLUMN:
+        
+      ALTER TABLE* table_name** ADD COLUMN*** column_name**** data_type*****;
+      
+        * ALTER TABLE is the command that declares a table's structure is to be altered
+        ** table_name  table_name declares the name of the table that is to altered
+        *** ADD COLUMN is the command that indicates the table will be altered by adding a column
+        **** column_name declares the name of the column to be added
+        ***** data_type declares the data type of the column to be added
+        
+        
+    DELETE:
+    
+      DELETE FROM* table_name**;
+      WHERE*** [conditional]
+      
+        * DELETE FROM is the command that declares that data is to be deleted
+        ** table_name declares the name of the table that data is to deleted FROM
+        *** WHERE is the clause used when only wanting to delete data that meets the conditional statement(s) given
+    
+    
+    ALTER TABLE - DROP COLUMN:
+        
+      ALTER TABLE* table_name** DROP COLUMN*** column_name****;
+        
+        * ALTER TABLE is the command that declares a table's structure is to be altered
+        ** table_name  table_name declares the name of the table that is to altered
+        *** ADD COLUMN is the command that indicates the table will be altered by removing a column
+        **** column_name declares the name of the column to be removed
+    
+    
+    DROP TABLE:
+    
+      DROP TABLE* table_name**;
+
+        * DROP TABLE is the command that declares a table's is to be deleted
+        ** table_name declares the name of the table that is to deleted
+
+
+
+
+3. What are some the data types that can be used in tables? Give a real world example of each.
+    
+    Numeric Data Types:
+        money - the dollar amount of an product
+        numeric - the shipping weight of a product 
+        
+    Date and Time Data Types:
+        datetime - the date and time a purchase request was recieved for a product
+        date - the date a product is to be delivered
+    
+    Character/Strings Data Types:
+        char - the id of a product that contains letters, numbers, and special characters
+        varchar - the description of a product
+    
+    Boolean Data Types:
+        true/false - the status of whether a product has been shipped
+
+
+
+
+4. Think through how to create a new table to hold a list of people invited to a wedding. This table needs to have first and last name, whether they sent in their RSVP, the number of guests they are bringing, and the number of meals (1 for adults and 1/2 for children).
+
+    Which data type would you use to store each of the following pieces of information?
+    
+      First and last name:
+        text
+      
+      Whether they sent in their RSVP:
+        true/false
+      
+      Number of guests:
+        smallint
+        
+      Number of meals.
+        numeric(3,1)
+
+    Write a command that makes the table to track the wedding.
+      >> see wedding.sql
+        
+    Using the table we just created, write a command that adds a column to track whether they were sent a thank you card.
+      >> see wedding.sql
+
+    You have decided to move the data about the meals to another table, so write a command to remove the column storing the number meals from the wedding table.
+      >> see wedding.sql
+    
+    The guests are going to need a place to sit at the reception, so write a command that adds a column for table number.
+      >> see wedding.sql
+    
+    The wedding is over and we do not need to keep this information, so write a command that deletes the wedding table from the database.
+      >> see wedding.sql
+
+
+
+
+5. Write a command to make a new table to hold the books in a library with the columns ISBN, title, author, genre, publishing date, number of copies, and available copies.
+      >> see books.sql
+    
+    Find three books and add their information to the table.
+      >> see books.sql
+    
+    Someone has just checked out one of the books. Change the available copies column to 1 fewer.
+      >> see books.sql
+    
+    Now one of the books has been added to the banned books list. Remove it from the table.
+      >> see books.sql
+
+
+
+
+6. Write a command to make a new table to hold spacecrafts. Information should include id, name, year launched, country of origin, a brief description of the mission, orbiting body, if it is currently operating, and approximate miles from Earth. In addition to the table creation, provide commands that perform the following operations:
+      >> see spacecraft.sql
+    
+    Add 3 non-Earth-orbiting satellites to the table.
+      >> see spacecraft.sql
+    
+    Remove one of the satellites from the table since it has just been crashed into the planet.
+      >> see spacecraft.sql
+    
+    Edit another satellite because it is no longer operating and change the value to reflect that.
+      >> see spacecraft.sql
+
+
+
+
+7. Write a command to make a new table to hold the emails in your inbox. This table should include an id, the subject line, the sender, any additional recipients, the body of the email, the timestamp, whether or not it’s been read, and the id of the email chain it’s in. Also provide commands that perform the following operations:
+      >> see inbox.sql
+    
+    Add 3 new emails to the inbox.
+      >> see inbox.sql
+    
+    You’ve just deleted one of the emails, so write a command to remove the row from the inbox table.
+      >> see inbox.sql
+    
+    You started reading an email but just heard a crash in another room. Mark the email as unread before investigating, so you can come back to it later.
+      >> see inbox.sql
