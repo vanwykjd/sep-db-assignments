@@ -1,0 +1,251 @@
+1. Write out a generic SELECT statement.
+
+    SELECT name, grade
+    FROM students
+    WHERE name LIKE 'A%'
+    AND grade > 89;
+
+
+
+2. Create a fun way to remember the order of operations in a SELECT statement, such as a mnemonic.
+    
+    FROM --------- Fancy
+    WHERE -------- White
+    GROUP BY ----- Girls
+    HAVING ------- Have
+    SELECT ------- Small
+    DISTINCT ----- Dog
+    ORDER BY ----- Obsessions
+    TOP ---------- Typically.
+    
+
+
+3. Given this dogs table, write queries to select the following pieces of data:
+
+    Display the name, gender, and age of all dogs that are part Labrador.
+    
+      SELECT name, age, gender
+      FROM dogs
+      WHERE breed LIKE '%labrador%';
+
+    
+    Display the ids of all dogs that are under 1 year old.
+    
+      SELECT id
+      FROM dogs
+      WHERE age < 1;
+    
+    
+    Display the name and age of all dogs that are female and over 35lbs.
+    
+      SELECT name, age
+      FROM dogs
+      WHERE gender = 'F' 
+      AND weight > 35;
+
+    
+    Display all of the information about all dogs that are not Shepherd mixes.
+      
+      SELECT *
+      FROM dogs
+      WHERE breed NOT LIKE '%shepherd%';
+
+    
+    Display the id, age, weight, and breed of all dogs that are either over 60lbs or Great Danes.
+    
+     Intake teams typically guess the breed of shelter dogs, so the breed column may have multiple words (for example, "Labrador Collie mix").
+
+      SELECT id, age, weight, breed
+      FROM dogs
+      WHERE weight > 60
+      OR breed LIKE '%great date%';
+      
+        
+
+4. Given this cats table, what records are returned from these queries?
+
+    SELECT name, adoption_date FROM cats;
+    
+      |  Mushi     |  2016-03-22T00:00:00.000Z  |
+      |  Seashell  |	null                      |
+      |  Azul      |  2016-04-17T00:00:00.000Z  |
+      |  Victoire  |  2016-09-01T00:00:00.000Z  |
+      |  Nala      |  null                      |
+
+    
+    SELECT name, age FROM cats;
+
+      |  Mushi     |  1  |
+      |  Seashell  |  7  |
+      |  Azul      |  3  |
+      |  Victoire  |  7  |
+      |  Nala      |  1  |
+
+
+
+5. From the cats table, write queries to select the following pieces of data.
+
+    Display all the information about all of the available cats.
+
+      SELECT * 
+      FROM cats 
+      WHERE adoption_date IS NULL;
+    
+    
+    Display the name and sex of all cats who are 7 years old.
+      
+      SELECT name, gender
+      FROM cats
+      WHERE age = 7;
+      
+      
+    Find all of the names of the cats, so you don’t choose duplicate names for new cats.
+    
+      SELECT name
+      FROM cats;
+
+
+
+6. List each comparison operator and explain, in your own words, when you would use it. Include a real world example for each.
+
+    If you can’t list these from memory, do these flashcards until you can!
+      
+      <  [Less than]
+            Used to determine if an initial value is less than a given value:
+            
+            SELECT name 
+            FROM cats 
+            WHERE age < 3;
+            
+           ===============            
+           |  name       |
+           ===============
+           |  Mushi      |
+           |  Nala       |
+           ---------------
+           
+           
+      >  [Greater than]
+            Used to determine if an initial value is greater than a given value:
+            
+            SELECT name
+            FROM cats 
+            WHERE age > 5;
+          
+           ===============            
+           |  name       |
+           ===============
+           |  Victoire   |
+           |  Seashell   |
+           ---------------
+           
+           
+      =  [Equal to]
+            Used to determine if two values are equal:
+            
+            SELECT name 
+            FROM cats 
+            WHERE age = 7;
+          
+           ===============            
+           |  name       |
+           ===============
+           |  Victoire   |
+           |  Seashell   |
+           ---------------
+           
+           
+      <= [Less than or equal to]
+            Used to determine if an initial value is less than or equal to a given value:
+            
+            SELECT name 
+            FROM cats 
+            WHERE age <= 3;
+          
+           ===============            
+           |  name       |
+           ===============
+           |  Mushi      |
+           |  Azul       |
+           |  Nala       |
+           ---------------
+           
+           
+      >= [Greater than or equal to]
+            Used to determine if an initial value is greater than or equal to a given value:
+            
+            SELECT name
+            FROM cats 
+            WHERE age >= 7;
+            
+           ===============            
+           |  name       |
+           ===============
+           |  Victoire   |
+           |  Seashell   |
+           ---------------
+      
+      
+      != [Not equal to]
+            Used to determine if two values are not equal:
+            
+            SELECT name
+            FROM cats 
+            WHERE age != 7;
+            
+           ===============            
+           |  name       |
+           ===============
+           |  Mushi      |
+           |  Azul       |
+           |  Nala       |
+           ---------------
+      
+      <> [Less than or greater than]
+            Used to determine if two values are not equal:
+            
+            SELECT name
+            FROM cats 
+            WHERE age <> 7;
+            
+           ===============            
+           |  name       |
+           ===============
+           |  Mushi      |
+           |  Azul       |
+           |  Nala       |
+           ---------------
+      
+      
+7. From the cats table, what data is returned from these queries?
+
+    SELECT name FROM cats WHERE gender = ‘F’;
+    
+      ===============            
+      |  name       |
+      ===============
+      |  Seashell   |
+      |  Nala       |
+      ---------------
+      
+    
+    SELECT name FROM cats WHERE age <> 3;
+    
+      ===============            
+      |  name       |
+      ===============
+      |  Mushi      |
+      |  Seashell   |
+      |  Victoire   |
+      |  Nala       |
+      ---------------
+      
+    
+    SELECT id FROM cats WHERE name != ‘Mushi’ AND gender = ‘M’;
+    
+      ========
+      |  id  |    
+      ========
+      |  3   |
+      |  4   |
+      --------
