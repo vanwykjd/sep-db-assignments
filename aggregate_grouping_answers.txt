@@ -1,0 +1,306 @@
+1. List 5 aggregate functions and explain, in your own words, what they are for. Include a real world example for each.
+
+              fruits          
+    ==========================
+    | name   | qty    | cost |
+    ==========================
+    | apple  | 5      | 0.99 |
+    | grapes | 10     | 0.75 |
+    --------------------------
+
+    SUM - When given a column of numeric values, it will add up all of the values within the given column and return the sum.
+    
+          SELECT SUM(qty)
+          FROM fruits;
+          
+            sum
+          -------
+            15   
+          (1 row) 
+    
+    AVG - When given a column of numeric values, it will use all of the values within the given to calculate and return the average.
+    
+          SELECT AVG(cost)
+          FROM fruits;
+          
+            avg
+          -------
+           0.87     
+          (1 row) 
+    
+    MIN - When given a column of numeric values, it will find and return the smallest value within the given column.
+    
+          SELECT MIN(qty)
+          FROM fruits;
+          
+            min
+          -------
+            5       
+          (1 row) 
+    
+    MAX - When given a column of numeric values, it will find and return the largest value within the given column.
+
+          SELECT MAX(qty)
+          FROM fruits;
+          
+            max
+          -------
+            10       
+          (1 row) 
+
+    COUNT - When given a column of values, count and return the number of values within the given column.
+    
+          SELECT COUNT(name)
+          FROM fruits;
+          
+           count 
+          -------
+               2
+          (1 row) 
+
+
+
+2. Given this donations table, write queries and include the output for the following:
+
+    The total of all donations received in the past year.
+    
+          SELECT SUM(amount)
+          FROM donations;
+          
+             sum    
+          ----------
+           993.0000
+          (1 row)    
+    
+
+    The total donations over time per donor (e.g. if Tanysha has donated 3 times with the amounts $25, $30, and $50, then the result would be | Tanysha | 105 |).
+
+          SELECT SUM(amount) as amount, donor
+          FROM donations
+          GROUP BY donor;
+          
+            amount  |   donor    
+          ----------+------------
+            25.0000 | Bran
+            60.0000 | Arya
+           173.0000 | Daenerys
+            30.0000 | Ygritte
+            50.0000 | Tormund
+            33.0000 | Sansa
+            20.0000 | Samwell
+            45.0000 | Melisandre
+            20.0000 | Bronn
+            90.0000 | Missandei
+           120.0000 | Tyrion
+             7.0000 | Gilly
+            75.0000 | Brienne
+           120.0000 | Margaery
+            25.0000 | Jon
+            10.0000 | Daario
+            20.0000 | Theon
+            70.0000 | Petyr
+          (18 rows)
+
+
+    The average donation per donor.
+    
+          SELECT AVG(amount), donor
+          FROM donations
+          GROUP BY donor;
+          
+                   avg          |   donor    
+          ----------------------+------------
+            25.0000000000000000 | Bran
+            20.0000000000000000 | Arya
+            86.5000000000000000 | Daenerys
+            30.0000000000000000 | Ygritte
+            50.0000000000000000 | Tormund
+            33.0000000000000000 | Sansa
+            20.0000000000000000 | Samwell
+            45.0000000000000000 | Melisandre
+            20.0000000000000000 | Bronn
+            22.5000000000000000 | Missandei
+            40.0000000000000000 | Tyrion
+             7.0000000000000000 | Gilly
+            75.0000000000000000 | Brienne
+           120.0000000000000000 | Margaery
+            25.0000000000000000 | Jon
+            10.0000000000000000 | Daario
+            10.0000000000000000 | Theon
+            70.0000000000000000 | Petyr
+          (18 rows)
+
+
+    The number of donations over $100.
+    
+          SELECT COUNT(amount)
+          FROM donations
+          WHERE amount > 100;
+          
+           count 
+          -------
+               2
+          (1 row)
+
+
+    The largest donation received in a single instance from a single donor.
+
+          SELECT MAX(amount)
+          FROM donations;
+
+             max    
+          ----------
+           120.0000
+          (1 row)
+ 
+ 
+    The smallest donation received.
+    
+          SELECT MIN(amount)
+          FROM donations;
+        
+            min   
+          --------
+           5.0000
+          (1 row)
+          
+          
+          
+3. How would you determine the display order of data returned by your SELECT statement?
+
+    To order the donation amounts in ascending order:
+    
+          SELECT amount
+          FROM donations
+          ORDER BY amount;
+          
+          
+    To order the donation amounts in descending order:
+    
+          SELECT amount
+          FROM donations
+          ORDER BY amount DESC;
+
+
+
+4. What is a real world situation where you would use OFFSET?
+    
+    If a sales manager sorted a table of employees based on their sales perfomrances, and wanted to know all the employees outside of the top 3, they could use an OFFSET of 3.
+    
+    
+    
+5. Why is it important to use ORDER BY when limiting your results?
+
+    Without using ORDER BY, the returned values within the LIMIT will only be based on the order of which they were inserted into the table.
+    
+    
+    
+6. What is the difference between HAVING and WHERE?
+
+    HAVING allows rows to be filtered after aggregations, unlike WHERE which filters before. HAVING also eliminates entire groups of results using a single comparison, as to WHERE filters individual rows by a given condition. 
+    
+    
+    
+7. Correct the following SELECT statement:
+
+    Incorrect: 
+    
+          SELECT id, SUM(amount)
+          FROM payment
+          HAVING SUM (amount) > 200;
+    
+    Correct: 
+    
+          SELECT id, SUM(amount)
+          FROM payment
+          GROUP BY id
+          HAVING SUM(amount) > 200;
+          
+          
+          
+8. Follow the instructions for the scenarios below:
+
+    Given this cats table from the previous checkpoint, list all cats organized by intake date.
+
+          SELECT *
+          FROM cats
+          ORDER BY intake_date;
+          
+           id |   name   | gender | age | intake_date | adoption_date 
+          ----+----------+--------+-----+-------------+---------------
+            1 | Mushi    | M      |   1 | 2016-01-09  | 2016-03-22
+            2 | Seashell | F      |   7 | 2016-01-09  | 
+            3 | Azul     | M      |   3 | 2016-01-11  | 2016-04-17
+            4 | Victoire | M      |   7 | 2016-01-11  | 2016-09-01
+            5 | Nala     | F      |   1 | 2016-01-12  | 
+          (5 rows)
+
+
+    Given this adoptions table, determine the 5 most recent adoptions to be featured for a social media promotion called "Happy Tails" which lists recent successful adoptions.
+
+          SELECT *
+          FROM adoptions
+          ORDER BY date DESC
+          LIMIT 5;
+          
+            id   |     adopter      |     cat     |    date    |   fee   
+          -------+------------------+-------------+------------+---------
+           10093 | Hermione Granger | Crookshanks | 1993-08-31 | 10.0000
+           10054 | Arabella Figg    | Mr. Tibbles | 1990-02-18 | 30.0000
+           10055 | Arabella Figg    | Mr. Paws    | 1990-02-18 | 30.0000
+           10040 | Arabella Figg    | Snowy       | 1989-11-29 | 35.0000
+           10037 | Arabella Figg    | Tufty       | 1988-05-03 | 20.0000
+          (5 rows)
+
+   
+   There is a potential adopter looking for an adult female cat. In the most efficient way possible, list all female cats 2 or more years old from the cats table.
+
+          SELECT * 
+          FROM cats
+          WHERE gender = 'F'
+          AND age >= 2;
+
+           id |   name   | gender | age | intake_date | adoption_date 
+          ----+----------+--------+-----+-------------+---------------
+            2 | Seashell | F      |   7 | 2016-01-09  | 
+          (1 row)
+
+
+    From the donations table (from problem #2), find the top 5 donors with the highest cumulative donation amounts to be honored as “Platinum Donors”.
+
+          SELECT donor, SUM(amount)
+          FROM donations
+          GROUP BY donor
+          ORDER BY SUM(amount) DESC
+          LIMIT 5;
+
+             donor   |   sum    
+          -----------+----------
+           Daenerys  | 173.0000
+           Margaery  | 120.0000
+           Tyrion    | 120.0000
+           Missandei |  90.0000
+           Brienne   |  75.0000
+           (5 rows)
+
+    From the donations table (from problem #2), find donors 6-15 with the next highest cumulative donation amounts to be honored as “Gold Donors”.
+    
+          SELECT donor, SUM(amount)
+          FROM donations
+          GROUP BY donor
+          ORDER BY SUM(amount) DESC
+          LIMIT 10 OFFSET 5;
+          
+             donor    |   sum   
+          ------------+---------
+           Petyr      | 70.0000
+           Arya       | 60.0000
+           Tormund    | 50.0000
+           Melisandre | 45.0000
+           Sansa      | 33.0000
+           Ygritte    | 30.0000
+           Bran       | 25.0000
+           Jon        | 25.0000
+           Bronn      | 20.0000
+           Samwell    | 20.0000
+           (10 rows)
