@@ -1,0 +1,260 @@
+1. How do you find related data that is held in two separate data tables?
+
+    Using a NATURAL JOIN statement will create an output table that only consists of the column names that appear in both input tables.
+
+
+
+2. Explain, in your own words, the difference between a CROSS JOIN, INNER JOIN, LEFT OUTER JOIN, RIGHT OUTER JOIN, and FULL OUTER JOIN. Give a real world example for each.
+    
+             car_inventory                                           car_sales          
+    =================================          =======================================================
+    | id | model   | qty    | msrp  |          | vin_num            | car_id | date_sold  | salesman |
+    =====+=========+========+========          =====================+========+============+===========
+    | 32 | ats     | 5      | 38500 |          | SALAK2D4XAA522386  | 32     | 2018-01-09 | Jim      |
+    | 42 | cts     | 10     | 46500 |          | 5Y4AJ32Y49A034933  | 32     | 2018-06-12 | Rob      |
+    | 52 | xts     | 8      | 46500 |          | 2G1WP551159340039  | 52     | 2018-07-22 | Bob      |
+    ---------------------------------          -------------------------------------------------------
+          
+    CROSS JOIN - This creates an output table that contains every row from table_A and table_B, and creates new rows for each combination of rows between both tables. This means that for every row in table_A, a combined row is created for each row in table_B. Because of this, the output table contains (table_A number of rows * table_B number of rows) rows. 
+    
+       If a car dealership wanted every combination of ways a car model could be sold, and every combination of car models a salesman could sell, they could use a CROSS JOIN statement using the car_inventory table and car_sales table as followed:
+ 
+       SELECT car_inventory.model, car_sales.salesman
+       FROM car_sales 
+       CROSS JOIN car_inventory;
+       
+         model  |  salesman  
+       ---------+------------
+          ats   |    Jim
+          cts   |    Jim
+          xts   |    Jim
+          ats   |    Rob
+          cts   |    Rob
+          xts   |    Rob
+          ats   |    Bob
+          cts   |    Bob
+          xts   |    Bob
+          
+          
+    INNER JOIN - This compares each row of two tables, and combines the column values from each tables that meet the JOIN clause matching values to create a new output table.
+    
+       If a car dealership wanted to know the msrp of each car sold, they could use an INNER JOIN statement using the car_inventory table and car_sales table as followed:
+       
+       SELECT car_inventory.model, car_inventory.id, car_inventory.msrp
+       FROM car_inventory 
+       INNER JOIN car_sales
+       ON car_sales.car_id = car_inventory.id
+       
+         model  |  id  |    msrp  
+       ---------+------+------------
+          ats   |  32  |  38500.00
+          ats   |  32  |  38500.00
+          xts   |  52  |  46500.00
+          
+ 
+    LEFT OUTER JOIN - After an INNER JOIN is executed on table_A and table_B, the LEFT OUTER JOIN returns all the values from the INNER JOIN, along with any rows from the left table (table_A) that do not match the right table(table_B). For any rows that do not match up, a NULL value is placed in the corresponding column.
+    
+       If a car dealership wanted to know how many cars of each model have been sold, they could use a LEFT OUTER JOIN statement using the car_inventory table and car_sales table as followed:
+    
+       SELECT car_inventory.model, COUNT(car_sales.car_id) NUM_SOLD
+       FROM car_inventory 
+       LEFT OUTER JOIN car_sales
+       ON car_sales.car_id = car_inventory.id
+       GROUP BY car_inventory.model;
+       
+         model  |  num_sold  
+       ---------+------------
+          cts   |     0
+          xts   |     1
+          ats   |     2
+            
+            
+    RIGHT OUTER JOIN - After an INNER JOIN is executed on table_A and table_B, the RIGHT OUTER JOIN returns all the values from the INNER JOIN, along with any rows from the right table (table_B) that do not match the left table(table_A). For any rows that do not match up, a NULL value is placed in the corresponding column.
+    
+       If a car dealership wanted to know the salesman that has sold each car model, they could use a RIGHT OUTER JOIN statement using the car_inventory table and car_sales table as followed:
+    
+       SELECT car_inventory.model, car_sales.salesman
+       FROM car_sales 
+       RIGHT OUTER JOIN car_inventory
+       ON car_sales.car_id = car_inventory.id;
+       
+         model  |  salesman  
+       ---------+------------
+          ats   |    Jim
+          ats   |    Rob
+          xts   |    Bob
+          cts   |    null
+    
+    
+    FULL OUTER JOIN - A FULL OUTER JOIN is an INNER JOIN, followed by a combined RIGHT OUTER JOIN and LEFT OUTER JOIN. This means that for every row in table_A that doesn't have a matching row in table_B to satisfy the join statement, a new row will be added to the output table containing null values in columns that correspond to table_B columns; and vice versa for table_B. 
+    
+       If a car dealership wanted to know each car model that has been sold by a salesman, but also wanted to know what car models each salesman has sold, they could use a FULL OUTER JOIN statement using the car_inventory table and car_sales table as followed:
+
+       SELECT car_inventory.model, car_inventory.id, car_sales.salesman, car_sales.car_id
+       FROM car_inventory 
+       FULL OUTER JOIN car_sales
+       ON car_sales.car_id = car_inventory.id;
+       
+         model  |  id  |  salesman  |  car_id  
+       ---------+------+------------+----------
+          ats   |  32  |    Jim     |    32
+          ats   |  32  |    Rob     |    32
+          xts   |  52  |    Bob     |    52
+          cts   |  42  |    null    |   null
+       
+       
+       
+3. Define primary key and foreign key. Give a real world example for each.
+
+       A primary key is an attribute/column/field that has been assigned a unique value for each record within the table. A foreign key is an attribute/column/field that contains the values of corresponding primary keys of another table. The foreign key helps link records that are related, but lie with different tables.
+       
+       Using the car_inventory and car_sales tables as an example, the primary key in the car_inventory table would be the id. That primary key is used as a link in the car_sales table by being assigned to the car_id field, making the car_id field the foreign key.
+
+
+
+4. Define aliasing.
+
+       Aliasing is the practice of assigning a table name to a shortend variable name to be called in a query.
+      
+
+
+5. Change this query so that you are using aliasing:
+
+      SELECT professor.name, compensation.salary, compensation.vacation_days FROM professor 
+      JOIN compensation 
+      ON professor.id = compensation.professor_id;
+
+      >>  SELECT p.name, c.salary, c.vacation_days FROM professor AS p 
+      >>  JOIN compensation AS c 
+      >>  ON p.id = c.professor_id;
+
+
+6. Why would you use a NATURAL JOIN? Give a real world example.
+
+      A NATURAL JOIN statement is an efficient way to evaluate multiple columns that share the same name in both tables.
+      
+      An example would be a car dealership's database having a table of service parts containing fields of the year and model_id matching the vehicle it belongs to; and another table of all the vehicles it has in inventory containing the same fields. If a vehicle within the inventory table was needing to be serviced, they would be able to create a NATURAL JOIN statement using the year and model_id columns to find compatible parts for that particular vehicle
+
+
+
+7. Using this Employee schema and data, write queries to find the following information:
+
+      All employees with their shifts if they have any. Also include any unscheduled shifts.
+
+      SELECT E.name, S.date, S.start_time
+      FROM employees E
+      FULL OUTER JOIN scheduled_shifts SS ON E.id = SS.employee_id
+      FULL OUTER JOIN shifts S ON SS.shift_id = S.id;
+
+
+
+8. Using this Adoption schema and data, please write queries to retrieve the following information and include the results:
+
+    All volunteers. If the volunteer is fostering a dog, include each dog as well.
+
+      SELECT V.last_name VOLUNTEER_LAST_NAME, D.name DOG_ADOPTED
+      FROM volunteers V
+      LEFT OUTER JOIN dog_adoptions DA ON DA.dog_id = V.foster_dog_id
+      LEFT OUTER JOIN dogs D ON D.id = V.foster_dog_id;
+
+
+    The cat's name, adopter's name, and adopted date for each cat adopted within the past month to be displayed as part of the "Happy Tail" social media promotion which posts recent successful adoptions.
+
+      SELECT  A.last_name ADOPTER_LAST_NAME, C.name CAT_NAME, CA.date
+      FROM adopters A
+      JOIN cat_adoptions CA ON A.id = CA.adopter_id
+      JOIN cats C ON CA.cat_id = C.id
+      WHERE CA.date > CURRENT_DATE - INTERVAL '1 MONTH';
+
+
+    Adopters who have not yet chosen a dog to adopt and generate all possible combinations of adopters and available dogs.
+
+      SELECT  A.last_name ADOPTER_LAST_NAME, D.name DOGS_AVAILABLE
+      FROM adopters A
+      JOIN dog_adoptions DA ON DA.adopter_id != A.id
+      CROSS JOIN dogs D
+      WHERE D.id != DA.dog_id;
+
+
+    Lists of all cats and all dogs who have not been adopted.
+      
+      SELECT C.name
+      FROM cats C
+      JOIN cat_adoptions CA on C.id != CA.cat_id
+      UNION
+      SELECT D.name
+      FROM dogs D
+      JOIN dog_adoptions DA on D.id != DA.dog_id;
+      
+      
+    Volunteers who are available to foster. If they currently are fostering a dog, include the dog. Also include all dogs who are not currently in foster homes.
+
+      SELECT V.last_name VOLUNTEER_LAST_NAME, D.name DOG_ADOPTED
+      FROM volunteers V
+      FULL OUTER JOIN dogs D ON V.foster_dog_id = D.id 
+      WHERE V.available_to_foster = true
+      OR D.id = V.foster_dog_id;
+      
+      
+    The name of the person who adopted Rosco.
+
+  	  SELECT A.last_name
+      FROM adopters A, dog_adoptions DA, dogs D
+      WHERE A.id = DA.adopter_id
+      AND D.name = 'Rosco';
+      
+      
+
+9. Using this Library schema and data, write queries applying the following scenarios:
+
+    To determine if the library should buy more copies of a given book, please provide the names and position, in order, of all of the patrons with a hold (request for a book with all copies checked out) on "Advanced Potion-Making".
+
+  	  SELECT P.name, H.rank
+  	  FROM patrons P
+  	  JOIN holds H ON P.id = H.patron_id
+  	  JOIN books B ON H.isbn = B.isbn
+  	  WHERE B.title = 'Advanced Potion-Making'
+  	  ORDER BY H.rank;
+      
+      
+    Make a list of all book titles and denote whether or not a copy of that book is checked out.
+
+  	  SELECT B.title,
+          CASE WHEN MAX(CASE WHEN T.checked_in_date IS NULL THEN 1 ELSE 0 END) = 0
+  	    	  THEN MAX(T.checked_in_date)
+          END LAST_CHECKED_IN_DATE
+  	  FROM books b
+  	  JOIN transactions T ON B.isbn = T.isbn
+  	  GROUP BY B.title;
+      
+
+    In an effort to learn which books take longer to read, the librarians would like you to create a list of average checked out time by book name in the past month.
+
+  	  SELECT B.title, AVG(T.checked_in_date - T.checked_out_date) AVERAGE_CHECKOUT_TIME
+  	  FROM transactions T
+  	  JOIN books B ON b.isbn = T.isbn
+  	  WHERE T.checked_out_date > CURRENT_DATE - INTERVAL '1 MONTH'
+  	  GROUP BY b.title
+  	  ORDER BY AVERAGE_CHECKOUT_TIME;
+      
+
+    In order to learn which items should be retired, make a list of all books that have not been checked out in the past 5 years.
+
+  	  SELECT B.title, MAX(t.checked_out_date) LAST_CHECKOUT_DATE
+  	  FROM books B
+  	  JOIN transactions T ON T.isbn = B.isbn
+  	  GROUP BY b.title
+  	  HAVING MAX(t.checked_out_date) < CURRENT_DATE - INTERVAL '5 YEARS';
+
+
+    List all of the library patrons. If they have one or more books checked out, correspond the books to the patrons.
+    
+  	  SELECT P.name,
+          MAX(CASE WHEN T.checked_in_date IS NOT NULL 
+  	    	  THEN NULL
+  	    	  ELSE B.title
+          END) BOOKS_CHECKED_OUT
+  	  FROM patrons P
+  	  JOIN transactions T ON P.id = T.patron_id
+  	  JOIN books B ON T.isbn = B.isbn
+  	  GROUP BY P.name;
