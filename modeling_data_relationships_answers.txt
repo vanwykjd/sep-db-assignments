@@ -1,0 +1,153 @@
+1. Create a database for the model we built in the example. Create a SQL file that creates the tables and inserts sample data (the questions below will help you create the data). Write queries applying the following scenarios:
+   
+    Find a guest who exists in the database and has not booked a room.
+        
+        SELECT G.*
+        FROM guest G
+        LEFT OUTER JOIN booking B ON G.guest_id = B.guest_id
+        WHERE B.guest_id is NULL;
+
+    
+    Find bookings for a guest who has booked two rooms for the same dates.
+
+        SELECT G.first_name, G.last_name, B.check_in_date, B.check_out_date, COUNT(*) ROOMS_BOOKED
+        FROM booking B
+        JOIN guest G on G.guest_id = B.guest_id
+        GROUP BY G.first_name, G.last_name, B.guest_id, B.check_in_date, B.check_out_date
+        HAVING COUNT(*) > 1;
+    
+    
+    Find bookings for a guest who has booked one room several times on different dates.
+
+        SELECT G.first_name, G.last_name, R.number ROOM_NUMBER, COUNT(*) TIMES_BOOKED
+        FROM booking B
+        JOIN guest G on G.guest_id = B.guest_id
+        JOIN room R on R.room_id = B.room_id
+        GROUP BY G.first_name, G.last_name, R.number
+        HAVING COUNT(*) > 1;
+    
+    
+    Count the number of unique guests who have booked the same room.
+
+        SELECT R.number ROOM_NUMBER, COUNT(DISTINCT B.guest_id) NUMBER_OF_UNIQUE_GUESTS
+        FROM booking B
+        JOIN guest G on G.guest_id = B.guest_id
+        JOIN room R on R.room_id = B.room_id
+        GROUP BY R.number;
+
+
+
+2. Design a data model for students and the classes they have taken. The model should include the students' grades for a given class.
+
+    Work through the questions from the example above. Document any assumptions you make about what data should be stored, what data types should be used, etc., and include them in a text file. Ask questions of your mentor in your next session if you are unsure about parts of your model.
+    
+      What classes/entities do we need to model?
+      
+        - A 'student' entity to hold info for each individual student
+        - A 'class' entity to hold info for individual classes
+        - A 'grade_report' entity to store the grades that are linked to the 'student' and 'class' entities.
+      
+      
+      What fields/attributes will each entity need?
+      
+        'student' entity:
+        
+          - 'id' to give each student a unique identifier
+          - 'first_name' to give an extra identifying attribute incase students share a last_name
+          - 'last_name' to make for easy lookup
+          - 'home_phone' to call parents
+          - 'emergency_phone' to call in case of emergency
+          
+          
+        'class' entity:
+        
+          - 'id' to give each class a unique identifier
+          - 'subject' to describe what the class studies
+        
+        
+        'grade_report' entity:
+        
+          - 'id' to give each report card a unique identifier
+          - 'student_id' to associate the report card with an individual student
+          - 'class_id' to associate the report card with an individual class
+          - 'grade' to represent the grade the associated 'student' received in the associated 'class'
+          
+          
+      What data types do we need to use?
+        
+         'student':
+        
+          - 'id': SERIAL or another auto incrementing INTEGER to make sure it is unique and not NULL
+          - 'first_name': VARCHAR since names can vary in length and characters
+          - 'last_name': VARCHAR since names can vary in length and characters
+          - 'home_phone': VARCHAR for ease of reading numbers delimited by (-)
+          - 'emergency_phone': VARCHAR for ease of reading numbers delimited by (-)
+          
+        'class':
+        
+          - 'id': SERIAL or another auto incrementing INTEGER to make sure it is unique and not NULL
+          - 'subject': VARCHAR since school subjects can vary in length and characters
+        
+        
+        'grade_report':
+        
+          - 'id': SERIAL or another auto incrementing INTEGER to make sure it is unique and not NULL
+          - 'student_id': INTEGER since it will be associated with the unique INTERGER from 'student'(id)
+          - 'class_id': INTEGER since it will be associated with the unique INTERGER from 'class'(id)
+          - 'grade': VARCHAR since the grade will be given in letter fashion
+
+
+      What relationships exist between entities?
+      
+          In this case there is a many-to-many relationship between 'student' and 'class' since a student can have many classes, and a class can have many students. Because of this, we use the 'grade_report' entity to function similarly as a join table by assigning it a FOREIGN KEY to reference the 'student's PRIMARY KEY, and a FOREIGN KEY to reference the 'class's PRIMARY KEY, as well as assigning it it's own PRIMARY KEY. With this in effect, this creates a one-to-many relationship between the student and a grade report, and between the class and the grade report.   
+      
+      
+      How should those relationships be represented in tables?
+      
+          The 'grade_report' entity will possess a FOREIGN KEY (student_id) that references the 'student'(id), as well as a FOREIGN KEY (class_id) that references the 'class'(id).
+      
+
+    Draw the model using the notation used in the checkpoint and submit a picture. You can also use a tool like StarUML or quickdatabasediagrams.com if you choose.
+
+
+
+
+
+3. Build a database for the students/classes data model. Create a SQL file that creates the tables and inserts sample data (the questions below will help you create the data). Write queries for the following data:
+
+    All students who have taken a particular class.
+
+          SELECT C.subject AS class, S.first_name, S.last_name
+          FROM class C
+          JOIN grade_report G ON G.class_id = C.id
+          JOIN student S ON G.student_id = S.id
+          WHERE C.id = 2;
+          
+          
+    The number of each grade (using letter grades A-F) earned in a particular class.
+
+          SELECT C.subject, G.grade, COUNT(*)
+          FROM grade_report G
+          JOIN class C ON G.class_id = C.id
+          WHERE C.id = 4
+          GROUP BY C.subject, G.grade;
+
+
+    Class names and the total number of students who have taken each class in the list.
+
+          SELECT C.subject, COUNT(S.id) STUDENTS_PER_CLASS
+          FROM class C
+          JOIN grade_report G ON g.class_id = C.id
+          JOIN student S on G.student_id = S.id
+          GROUP BY C.subject;
+
+
+    The class taken by the largest number of students.
+    
+          SELECT C.subject, COUNT(S.id) NUMBER_OF_STUDENTS
+          FROM class C
+          JOIN grade_report G ON g.class_id = C.id
+          JOIN student S on G.student_id = S.id
+          GROUP BY C.subject
+          ORDER BY NUMBER_OF_STUDENTS DESC
+          LIMIT 1;
