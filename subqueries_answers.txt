@@ -1,0 +1,213 @@
+1. Explain a subquery in your own words.
+
+    A subquery is a query that is incased within another query; a SELECT statement that is created within a SELECT/INSERT/UPDATE/DELETE statetement; a 'child' SELECT statement embedded within a 'parent' SELECT/INSERT/UPDATE/DELETE statement.
+
+
+
+
+2. Where can you use a subquery within a SELECT statement?
+
+    You can use a subquery within SELECT, INSERT, UPDATE and DELETE statements; generally created within the WHERE clause, but may also be used within FROM or SELECT clauses.
+
+
+
+
+3. When would you employ a subquery?
+
+    You would use a subquery to return data that would be used as a condition for the main query, to further restrict the data to be returned within a results table.
+
+
+
+
+4. Explain a row constructor in your own words.
+
+    A row constructor is an expression that creates a row from a list of values given, either to serve as an instance with a subquery, or as a new record to be inserted into a table. When a row constructor is given a list of values, it places the values in the columns positioned reflecting the order of each value. That's why it is critical to create the list of values in the order that reflects the same order as their corresponding columns.    
+    
+
+
+
+5. What happens if a row in the subquery result provides a NULL value to the comparison?
+
+    The result will be NULL.
+    
+    
+    
+
+6. What are the ways to use a subquery within a WHERE clause? If you can't remember them, do these flashcards until you can.
+
+    IN: Returns TRUE if the subquery finds at least one row matching a condition, otherwise FALSE.
+    
+    NOT IN: Returns TRUE if the subquery doesn't find any rows matching a condition, otherwise FALSE.
+    
+    ANY: Returns TRUE if the subquery finds one or more rows matching a condition, otherwise FALSE.
+    
+    SOME: Returns TRUE if the subquery finds one or more rows matching a condition, otherwise FALSE.
+    
+    ALL: Returns TRUE if every row of the subquery matches a condition OR if the subquery has no rows.
+    
+    EXISTS: Returns TRUE if a subquery has at least one row as a result of a given condition, otherwise FALSE.
+    
+    NOT EXISTS: Returns TRUE if a subquery doesn't have any rows as a result of a given condition, otherwise FALSE.
+    
+    ROW(VALUES): Uses given values to create a row that will be matched against a subquery.
+
+
+
+
+7. Using this Adoption schema and data, please write queries to retrieve the following information and include the results:
+
+    - All volunteers. If the volunteer is fostering a dog, include each dog as well.
+    
+        SELECT V.last_name VOLUNTEER,
+            (SELECT name 
+             FROM dogs D 
+             WHERE D.id = V.foster_dog_id) DOG
+        FROM volunteers V;
+
+
+    - The cat's name, adopter's name, and adopted date for each cat adopted within the past month to be displayed as part of the "Happy Tail" social media promotion which posts recent successful adoptions.
+
+        SELECT HT.name CAT, HT.last_name ADOPTER, HT.date ADOPTED_DATE
+        FROM (SELECT C.name, A.last_name, CA.date
+              FROM cat_adoptions CA
+              JOIN cats C ON C.id = CA.cat_id
+              JOIN adopters A ON A.id = CA.adopter_id) HT
+        WHERE HT.date > CURRENT_DATE - INTERVAL '1 MONTH';
+
+
+    - Adopters who have not yet chosen a dog to adopt and generate all possible combinations of adopters and available dogs.
+
+        SELECT A.last_name, D.name
+        FROM dogs D, adopters A
+        WHERE A.id NOT IN (SELECT adopter_id FROM dog_adoptions)
+        AND D.id NOT IN (SELECT dog_id FROM dog_adoptions);
+
+
+    - Lists of all cats and all dogs who have not been adopted.
+
+        SELECT C.id, C.name
+        FROM cats C
+        WHERE C.id NOT IN (SELECT cat_id FROM cat_adoptions)
+        UNION
+        SELECT D.id, D.name
+        FROM dogs D
+        WHERE D.id NOT IN (SELECT dog_id FROM dog_adoptions)
+        ORDER BY id;
+        
+
+    - The name of the person who adopted Rosco.
+    
+        SELECT last_name
+        FROM adopters
+        WHERE id = ANY
+               (SELECT adopter_id
+                FROM dog_adoptions
+                WHERE dog_id = 10007);   
+
+
+
+
+8. Using this Library schema and data, write queries applying the following scenarios, and include the results:
+
+    - To determine if the library should buy more copies of a given book, please provide the names and position, in order, of all of the patrons with a hold (request for a book with all copies checked out) on "Advanced Potion-Making".
+
+        SELECT P.name PATRON, H.rank RANK
+        FROM (SELECT patron_id ID, rank
+              FROM holds H
+              WHERE H.isbn = '9136884926') H
+        JOIN patrons P ON P.id = H.id
+        ORDER BY RANK;
+        
+        
+    - Make a list of all book titles and denote whether or not a copy of that book is checked out.
+
+        SELECT (SELECT B.title FROM books B WHERE T.isbn = B.isbn) TITLE,
+                CASE WHEN MAX(CASE WHEN T.checked_in_date IS NULL THEN 1 ELSE 0 END) = 0
+                THEN MAX(T.checked_in_date)
+                END LAST_CHECKED_OUT
+        FROM transactions T
+        GROUP BY T.isbn;
+        
+        
+    - In an effort to learn which books take longer to read, the librarians would like you to create a list of average checked out time by book name in the past month.
+
+        SELECT B.title, AVG(T.checked_in_date - T.checked_out_date) AVERAGE_CHECKOUT_TIME
+        FROM transactions T
+        JOIN books B ON B.isbn = T.isbn
+        WHERE B.isbn = ANY 
+               (SELECT T.isbn
+                FROM transactions T
+                WHERE T.checked_out_date > CURRENT_DATE - INTERVAL '1 MONTH'
+                AND T.checked_in_date IS NOT NULL)
+        GROUP BY B.title
+        ORDER BY AVERAGE_CHECKOUT_TIME;
+        
+
+    - In order to learn which items should be retired, make a list of all books that have not been checked out in the past 5 years.
+
+        SELECT B.title
+        FROM books B
+        WHERE B.isbn = ANY
+               (SELECT isbn
+                FROM transactions
+                GROUP BY isbn
+                HAVING MAX(checked_out_date) < CURRENT_DATE - INTERVAL '5 YEARS');
+                
+
+    - List all of the library patrons. If they have one or more books checked out, correspond the books to the patrons.
+    
+        SELECT (SELECT P.name FROM patrons P WHERE P.id = T.patron_id) PATRON, 
+                MAX(CASE WHEN T.checked_in_date IS NOT NULL 
+                THEN NULL
+                ELSE (SELECT B.title FROM books B WHERE T.isbn = B.isbn)
+                END) BOOKS_CHECKED_OUT
+        FROM transactions T
+        GROUP BY PATRON;
+
+
+
+
+9. Using this Flight schema and data, write queries applying the following scenarios, and include the results:
+
+    - To determine the most profitable airplanes, find all airplane models where each flight has had over 250 paying customers in the past month.
+
+        SELECT P.model
+        FROM airplanes P
+        WHERE P.model = ANY
+               (SELECT F.airplane_model
+                FROM flights F
+                JOIN transactions T ON F.flight_number = T.flight_number
+                WHERE T.date > CURRENT_DATE - INTERVAL '1 MONTH'
+                GROUP BY F.airplane_model
+                HAVING MIN(T.seats_sold) > 250);
+                
+
+    - To determine the most profitable flights, find all destination-origin pairs where 90% or more of the seats have been sold in the past month.
+
+        SELECT F.origin, F.destination
+        FROM flights F
+        WHERE F.flight_number = ANY
+               (SELECT T.flight_number
+                FROM transactions T
+                JOIN airplanes P ON F.airplane_model = P.model
+                WHERE T.date > CURRENT_DATE - INTERVAL '1 MONTH'
+                GROUP BY T.flight_number, P.seat_capacity
+                HAVING AVG(T.seats_sold) >= (P.seat_capacity * 0.9));
+                
+
+    - The airline is looking to expand its presence in Asia and globally. Find the total revenue of any flight (not time restricted) arriving at or departing from Singapore (SIN).
+
+        SELECT T.flight_number, T.total_revenue
+        FROM transactions T
+        WHERE T.flight_number = ANY
+               (SELECT F.flight_number
+                FROM flights F
+                WHERE destination = 'SIN'
+                OR origin = 'SIN');
+
+
+
+
+10. Compare the subqueries you've written above. Compare them to the joins you wrote in Checkpoint 6. Which ones are more readable? Which were more logical to write?
+
+       In most situations, I think subqueries are a little more readable and more logical to write. However, I feel the logic used to determine whether a JOIN or a subquery depends on the situation; are you wanting your query to be more readable for others, or are you wanting to optimize your query's performance. Overall, I think I would initially use subqueries to save time on the development side, then maybe refactor using JOINs to improve time on the performance side.  
